@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout code from the SCM
+                git 'https://github.com/billalcodes/mlops.git'
+            }
+        }
+        stage('Verify Branch') {
+            steps {
+                script {
+                    def branchName = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+                    if (branchName == 'main') {
+                        echo "Push is allowed for the main branch."
+                    } else {
+                        error "Pushes to branches other than main are not allowed."
+                    }
+                }
+            }
+        }
+        // Additional stages for build, test, deploy, etc.
+    }
+}
